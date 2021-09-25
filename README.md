@@ -27,3 +27,25 @@ uvicorn main:app --host 0.0.0.0 --port 80
 <br>
 
 4. Open browser and navigate to localhost
+<br>
+
+5. Create payment keys and address with Option 1
+<br>
+
+6. Fund this given address with your test_ada
+   You can do this via the testnet faucet or your own tesnet wallet
+   <strong> DO NOT SEND IT REAL ADA </strong>
+<br>
+
+7. Select Option 2 to check if the address has recieved your tAda
+   Once you see a new UTxO, proceed further
+<br>
+
+8. Move to option 3 to create a tx to the script address with a new UTxO
+   Upload the compiled Plutus script, its address will be built internally.
+<br>
+
+9. Check UTxO balance with Option 2 for confirmation of transaction 
+<br>
+
+10. Option 4 can be used to redeem the funded script UTxO
