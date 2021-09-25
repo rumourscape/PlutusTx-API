@@ -26,6 +26,11 @@ def index():
 def newscript_html():
     return FileResponse('static/newscript.html')
 
+@app.get('/redeem')
+def redeemer():
+    return FileResponse('static/redeem.html')
+
+
 @app.get('/api/newkeys')
 def create_keys():
     if os.path.isfile('payment.skey'): return "Keys already exist. Proceed to next steps."
@@ -109,10 +114,36 @@ def newscript(
     builder= f" cardano-cli transaction build --alonzo-era --tx-in {utxo} --tx-out $(cat script.addr)+{str(tada*1000000)} --tx-out-datum-hash {datumhash} --change-address $(cat payment.addr) --protocol-params-file protocol.json --out-file tx.raw --testnet-magic $MAGIC"
     build=subprocess.run([builder], shell= True, text= True, stdout = subprocess.PIPE).stdout.strip()
     
-    signer=f"cardano-cli transaction sign --tx-body-file tx.raw --testnet-magic $MAGIC --signing-key-file payment.skey --out-file tx.sign"
+    signer="cardano-cli transaction sign --tx-body-file tx.raw --testnet-magic $MAGIC --signing-key-file payment.skey --out-file tx.sign"
     sign=subprocess.run([signer], shell= True, text= True, stdout = subprocess.PIPE).stdout.strip()
     
-    submission=f"cardano-cli transaction submit --tx-file tx.sign --testnet-magic $MAGIC"
+    submission="cardano-cli transaction submit --tx-file tx.sign --testnet-magic $MAGIC"
     submit=subprocess.run([submission], shell= True, text= True, stdout = subprocess.PIPE).stdout.strip()
 
     return  submit
+
+@app.post('/api/redeem')
+def redeem(
+    utxo:str = Form(...),
+    datum:str = Form(...),
+    redeemer:str = Form(...),
+    collateral:str = Form(...),
+    script: UploadFile= File(...)
+            ):
+    
+    if allowed_file(script.filename):
+        file_location = f"{script.filename}"
+        with open(file_location, "wb+") as file_object:
+            shutil.copyfileobj(script.file, file_object)
+    else: return "Invalid Filetype. Upload .plutus script."
+
+    redeem_ = f"cardano-cli transaction build --alonzo-era --testnet-magic $MAGIC --tx-in {utxo} --tx-in-script-file {script.filename} --tx-in-datum-value {datum} --tx-in-redeemer-value {redeemer} --tx-in-collateral {collateral} --change-address $(cat payment.addr) --protocol-params-file protocol.json --out-file tx_unlock.raw"
+    subprocess.run([redeem_], shell= True, text= True ,stdout = subprocess.PIPE)
+
+    signer= "cardano-cli transaction sign --tx-body-file tx_unlock.raw --testnet-magic $MAGIC --signing-key-file payment.skey --out-file tx_unlock.sign"
+    subprocess.run([signer], shell= True, text= True ,stdout = subprocess.PIPE)
+
+    submission="cardano-cli transaction submit --tx-file tx_unlock.sign --testnet-magic $MAGIC"
+    submit=subprocess.run([submission], shell= True, text= True ,stdout = subprocess.PIPE).stdout.strip()
+
+    return submit

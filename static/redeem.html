@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PlutusTx</title>
+</head>
+
+<body>
+    <form action="/api/redeem" method="POST" enctype="multipart/form-data">
+        <br>
+        <label for="utxo">Script UTxO:</label><br>
+        <input type="text" id="utxo" name="utxo" required><br><br>
+        <label for="datum">Datum:</label><br>
+        <input type="text" id="datum" name="datum" required><br><br>
+        <label for="redeemer">Redeemer:</label><br>
+        <input type="text" id="redeemer" name="redeemer" required><br><br>
+        <label for="collateral">Collateral UTxO:</label><br>
+        <input type="text" id="collateral" name="collateral" required><br><br>
+        <label for="script">Plutus Script (compiled):</label><br>
+        <input type="file" id="script" name="script" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
