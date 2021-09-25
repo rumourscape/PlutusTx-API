@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PlutusTx</title>
+</head>
+
+<body>
+    <form action="/api/newscript" method="POST" enctype="multipart/form-data">
+        <br>
+        <label for="utxo">Wallet UTxO:</label><br>
+        <input type="text" id="utxo" name="utxo" required><br><br>
+        <label for="tada">Amount of t-Ada to send:</label><br>
+        <input type="text" id="tAda" name="tada" required><br><br>
+        <label for="datum">Datum (will be auto-hashed):</label><br>
+        <input type="text" id="datum" name="datum" required><br><br>
+        <label for="script">Plutus Script (compiled):</label><br>
+        <input type="file" id="script" name="script" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
